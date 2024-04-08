@@ -37,7 +37,7 @@ export const postCreateValidation = (req, res, next) => {
     const validations = [
         body('title', 'Enter article title').isLength({min: 3}).isString(),
         body('text', 'Enter article text').isLength({min: 10}).isString(),
-        body('tags', 'Incorrect tag format (specify an array)').optional().isString(),
+        body('tags', 'Incorrect tag format (specify an array)').optional().isArray(),
         body('imageUrl', 'Invalid image link').optional().isString()
     ]
 

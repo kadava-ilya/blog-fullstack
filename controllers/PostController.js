@@ -2,7 +2,7 @@ import PostModel from '../models/Post.js'
 
 export const getAllPosts = async (req, res) => {
     try {
-        const posts = await PostModel.find().populate('user').exec()
+        const posts = await PostModel.find().populate({path: 'user', select: ['fullName', 'imageUrl']}).exec()
 
         res.json(posts)
     } catch (err) {
@@ -25,7 +25,7 @@ export const getPostById = async (req, res) => {
             {
                 returnDocument: 'after'
             }
-        )
+        ).populate('user')
 
         if (!doc) {
             return res.status(404).json({
@@ -108,6 +108,20 @@ export const removePost = async (req, res) => {
         console.log(err)
         res.status(500).json({
             message: 'Failed to delete article'
+        })
+    }
+}
+
+export const getLastTags = async (req, res) => {
+    try {
+        const posts = await PostModel.find().limit(5).exec();
+        const tags = posts.map(post => post.tags).flat().slice(0, 5);
+
+        res.json(tags)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: 'Failed to retrieve last tags'
         })
     }
 }

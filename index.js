@@ -5,9 +5,11 @@ import multer from 'multer'
 import {registerValidation, loginValidation, postCreateValidation} from "./validations/validations.js";
 import {UserController, PostController} from './controllers/index.js'
 import { handleValidationErrors, checkAuth } from './utils/index.js'
+import cors from "cors";
 
 const app = express();
-app.use(express.json())
+app.use(express.json());
+app.use(cors());
 app.use('/uploads', express.static('uploads'))
 mongoose
     .connect('mongodb+srv://ilyatrader97:q7j96eU5CaKl8Yjj@blogcluster.rvwr40j.mongodb.net/blog?retryWrites=true&w=majority&appName=BlogCluster')
@@ -36,6 +38,8 @@ app.get('/posts/:id', PostController.getPostById)
 app.post('/posts', checkAuth, postCreateValidation, handleValidationErrors, PostController.createPost)
 app.patch('/posts/:id', checkAuth, postCreateValidation, handleValidationErrors, PostController.updatePost)
 app.delete('/posts/:id', checkAuth, PostController.removePost)
+
+app.get('/tags', PostController.getLastTags)
 
 // Upload image
 app.post('/upload', checkAuth, upload.single('image'), (req, res) => {

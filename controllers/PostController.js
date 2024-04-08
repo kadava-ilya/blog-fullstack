@@ -2,7 +2,19 @@ import PostModel from '../models/Post.js'
 
 export const getAllPosts = async (req, res) => {
     try {
-        const posts = await PostModel.find().populate({path: 'user', select: ['fullName', 'imageUrl']}).exec()
+        let sortOption = {}
+        const reqQuery = req.query.sortBy
+
+        if (reqQuery === 'popular') {
+            sortOption = {viewsCount: -1}
+        } else if (reqQuery === 'new') {
+            sortOption = {createdAt: -1}
+        }
+
+        const posts = await PostModel.find()
+            .populate({path: 'user', select: ['fullName', 'imageUrl']})
+            .sort(sortOption)
+            .exec()
 
         res.json(posts)
     } catch (err) {
